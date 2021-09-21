@@ -3,6 +3,9 @@
 
 #include "../Game_local.h"
 #include "../Weapon.h"
+#include "../../idlib/math/Math.h"
+
+
 
 class rvWeaponMachinegun : public rvWeapon {
 public:
@@ -224,15 +227,25 @@ stateResult_t rvWeaponMachinegun::State_Fire ( const stateParms_t& parms ) {
 		STAGE_INIT,
 		STAGE_WAIT,
 	};	
+	// random pellets init  
+	int randPellets;
+	// random spread init 
+	float randSpread;
 	switch ( parms.stage ) {
 		case STAGE_INIT:
+			// set random pellets 
+			randPellets = rvRandom::irand(1, 100);
+			// set random spread
+			randSpread = rvRandom::flrand(1.0f, 20.0f);
+			gameLocal.Printf("randPellets:%i\nrandSpread:%f\n", randPellets, randSpread);
 			if ( wsfl.zoom ) {
 				nextAttackTime = gameLocal.time + (altFireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
-				Attack ( true, 1, spreadZoom, 0, 1.0f );
+				Attack ( true, randPellets, randSpread, 0, 1.0f );
 				fireHeld = true;
 			} else {
 				nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
-				Attack ( false, 1, spread, 0, 1.0f );
+				Attack ( false, randPellets, randSpread, 0, 1.0f );
+				fireHeld = true;
 			}
 			PlayAnim ( ANIMCHANNEL_ALL, "fire", 0 );	
 			return SRESULT_STAGE ( STAGE_WAIT );
