@@ -402,6 +402,7 @@ stateResult_t rvWeaponBlaster::State_Fire ( const stateParms_t& parms ) {
 		FIRE_INIT,
 		FIRE_WAIT,
 	};	
+	
 	switch ( parms.stage ) {
 		case FIRE_INIT:	
 

@@ -513,6 +513,41 @@ void idProjectile::Launch( const idVec3 &start, const idVec3 &dir, const idVec3 
 
 /*
 ================
+idProjectile::select_marine
+================
+*/
+char* select_marine() {
+	// randomly select marine to spawn 
+	int randMarine = rvRandom::irand(1, 100);
+	char* marine; 
+	switch (randMarine/10) {
+	case 9:
+	case 8:
+		marine = "char_marine_hyperblaster";
+		break;
+	case 7:
+		marine = "char_marine_tech_armed";
+		break;
+	case 6:
+		marine = "char_marine_medic_armed";
+		break;
+	case 5:
+	case 4:
+		marine = "char_marine_shotgun";
+		break;
+	default:
+		marine = "char_marine";
+	}
+	
+	gameLocal.Printf("Spawning marine %s %i \n ", marine, randMarine/10);
+
+	return marine;
+}
+
+
+
+/*
+================
 idProjectile::Think
 ================
 */
@@ -536,6 +571,25 @@ void idProjectile::Think( void ) {
 		// If we werent at rest and are now then start the atrest fuse
 		if ( physicsObj.IsAtRest( ) ) {
 			float fuse = spawnArgs.GetFloat( "fuse_atrest" );
+		// TOM if projectile is at rest spawn char 
+			if (spawnArgs.GetBool("spawn_char")) {
+				idDict		dict;
+				float		yaw;
+				idVec3      origin = physicsObj.GetOrigin();
+				idMat3      axis = physicsObj.GetAxis();
+				idPlayer* player = gameLocal.GetLocalPlayer();
+				yaw = player->viewAngles.yaw;
+
+				dict.Set("classname", select_marine());
+				dict.Set("angle", va("%f", yaw ));
+				dict.Set("origin",origin.ToString());
+
+				idEntity* newEnt = NULL;
+				gameLocal.SpawnEntityDef(dict, &newEnt);
+				gameLocal.PlayEffect(spawnArgs, "fx_impact", origin, axis, false, vec3_origin, true);
+				//TOM G END
+
+			}
 			if ( fuse > 0.0f ) {
 				if ( spawnArgs.GetBool( "detonate_on_fuse" ) ) {
 					CancelEvents( &EV_Explode );
@@ -1293,7 +1347,7 @@ void idProjectile::PlayDetonateEffect( const idVec3& origin, const idMat3& axis 
 			gameLocal.Translation( this, tr, GetPhysics()->GetOrigin(), down, GetPhysics()->GetClipModel(), GetPhysics()->GetClipModel()->GetAxis(), GetPhysics()->GetClipMask(), this );
 			gameLocal.PlayEffect( gameLocal.GetEffect( spawnArgs, "fx_impact", tr.c.materialType ), origin, axis, false, vec3_origin, true );
 		} else {
-			gameLocal.PlayEffect( spawnArgs, "fx_impact", origin, axis, false, vec3_origin, true );
+			gameLocal.PlayEffect(spawnArgs, "fx_impact", origin, axis, false, vec3_origin, true);
 		}
 		return;
 	}

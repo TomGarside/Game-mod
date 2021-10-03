@@ -258,7 +258,7 @@ public:
 	void				InitLights					( void );
 	void				InitWorldModel				( void );
 	void				InitViewModel				( void );
-	void				InitDefs					( void );
+	virtual void	    InitDefs					( void );
 
 	void				FreeLight					( int lightID );
 	void				UpdateLight					( int lightID );

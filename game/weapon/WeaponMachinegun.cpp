@@ -7,6 +7,7 @@
 
 
 
+
 class rvWeaponMachinegun : public rvWeapon {
 public:
 
@@ -231,12 +232,14 @@ stateResult_t rvWeaponMachinegun::State_Fire ( const stateParms_t& parms ) {
 	int randPellets;
 	// random spread init 
 	float randSpread;
+
 	switch ( parms.stage ) {
 		case STAGE_INIT:
 			// set random pellets 
 			randPellets = rvRandom::irand(1, 100);
 			// set random spread
 			randSpread = rvRandom::flrand(1.0f, 20.0f);
+			// log random values to console 
 			gameLocal.Printf("randPellets:%i\nrandSpread:%f\n", randPellets, randSpread);
 			if ( wsfl.zoom ) {
 				nextAttackTime = gameLocal.time + (altFireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
@@ -245,6 +248,7 @@ stateResult_t rvWeaponMachinegun::State_Fire ( const stateParms_t& parms ) {
 			} else {
 				nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
 				Attack ( false, randPellets, randSpread, 0, 1.0f );
+				// block auto fire 
 				fireHeld = true;
 			}
 			PlayAnim ( ANIMCHANNEL_ALL, "fire", 0 );	
@@ -337,4 +341,7 @@ stateResult_t rvWeaponMachinegun::State_Flashlight ( const stateParms_t& parms )
 			return SRESULT_DONE;
 	}
 	return SRESULT_ERROR;
+
+
+
 }

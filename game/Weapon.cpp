@@ -2505,6 +2505,13 @@ rvWeapon::Attack
 void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuseOffset, float power ) {
 	idVec3 muzzleOrigin;
 	idMat3 muzzleAxis;
+	idVec3 playerOrigin;
+	idMat3 PlayerAxis;
+	// dump player location 
+	//if (owner) {
+	//	owner->GetPosition(playerOrigin, PlayerAxis);
+	//	gameLocal.Printf("Player Position : x:%f y:%f z:%f", playerOrigin.x, playerOrigin.y, playerOrigin.z);
+	//}
 	
 	if ( !viewModel ) {
 		common->Warning( "NULL viewmodel %s\n", __FUNCTION__ );
