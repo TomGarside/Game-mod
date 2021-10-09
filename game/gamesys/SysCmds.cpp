@@ -3,6 +3,7 @@
 #pragma hdrstop
 
 #include "../Game_local.h"
+#include "../../waveSpawner.h"
 // RAVEN BEGIN
 #include "../ai/AI.h"
 #if !defined(__GAME_PROJECTILE_H__)
@@ -3022,6 +3023,27 @@ void Cmd_ShuffleTeams_f( const idCmdArgs& args ) {
 	gameLocal.mpGame.ShuffleTeams();
 }
 
+//TOM CHANGES 
+void Cmd_spawnWave_f(const idCmdArgs& args) {
+	gameLocal.Printf("spawning wave");
+	int wave = 1; 
+	if (args.Argv(1)) {
+		wave = atoi(args.Argv(1));
+	}
+	// location for waves to spawn move to def/ constant?
+	//location: 10920.37 - 7967.3 132.35
+	//axis : 0.83 - 0.56 0.02 0.56 0.83 0 - 0.02 0.01 1
+
+	idVec3 origin;
+	origin.Set(10920.37, -7967.3, 132.35);
+
+	idMat3 axis;
+	
+	waveSpawner monsterWave(origin, axis, "monster_berserker", "monster_gunner", "monster_gladiator", wave);
+	monsterWave.spawnWave();
+
+}
+
 #ifndef _FINAL
 void Cmd_ClientOverflowReliable_f( const idCmdArgs& args ) {
 	idBitMsg	outMsg;
@@ -3223,6 +3245,10 @@ void idGameLocal::InitConsoleCommands( void ) {
 	cmdSystem->AddCommand( "setPMCVars",			Cmd_SetPMCVars_f,			CMD_FL_GAME,				"Resets player movement cvars" );
 
 	cmdSystem->AddCommand( "testClientModel",		Cmd_TestClientModel_f,		CMD_FL_GAME,				"" );
+// Tom Garside Changes 
+	cmdSystem->AddCommand( "spawnWave",               Cmd_spawnWave_f,          CMD_FL_GAME,                 "Spawn a wave of monsters");
+
+
 #ifndef _FINAL
 	cmdSystem->AddCommand( "clientOverflowReliable", Cmd_ClientOverflowReliable_f, CMD_FL_GAME,				"" );
 #endif

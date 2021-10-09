@@ -10,6 +10,7 @@
 #include "ai/AI_Manager.h"
 #include "Projectile.h"
 #include "spawner.h"
+#include "../waveSpawner.h"
 
 /*
 ===============================================================================
@@ -571,24 +572,31 @@ void idProjectile::Think( void ) {
 		// If we werent at rest and are now then start the atrest fuse
 		if ( physicsObj.IsAtRest( ) ) {
 			float fuse = spawnArgs.GetFloat( "fuse_atrest" );
-		// TOM if projectile is at rest spawn char 
+		// TOMG if projectile is at rest spawn char 
 			if (spawnArgs.GetBool("spawn_char")) {
-				idDict		dict;
-				float		yaw;
-				idVec3      origin = physicsObj.GetOrigin();
-				idMat3      axis = physicsObj.GetAxis();
+				idDict	  dict;
+				float	  yaw;
+				idVec3    origin = physicsObj.GetOrigin();
+				idMat3    axis   = physicsObj.GetAxis();
 				idPlayer* player = gameLocal.GetLocalPlayer();
+				idEntity* newEnt = NULL;
+
+				// get player direction 
 				yaw = player->viewAngles.yaw;
 
+				// randomly select marine ally to spawn 
 				dict.Set("classname", select_marine());
+				//faces same direction as the player 
 				dict.Set("angle", va("%f", yaw ));
+				// spawns on projectile location 
 				dict.Set("origin",origin.ToString());
-
-				idEntity* newEnt = NULL;
+				// spawn new entity 
 				gameLocal.SpawnEntityDef(dict, &newEnt);
+				// play effect 
+				gameLocal.Printf("location : %s\n", origin.ToString());
+				gameLocal.Printf("axis : %s\n", axis.ToString());
 				gameLocal.PlayEffect(spawnArgs, "fx_impact", origin, axis, false, vec3_origin, true);
 				//TOM G END
-
 			}
 			if ( fuse > 0.0f ) {
 				if ( spawnArgs.GetBool( "detonate_on_fuse" ) ) {
