@@ -39,7 +39,6 @@ idVec3 waveSpawner::offSetLocation() {
 }
 
 void waveSpawner::spawnWave() {
-	
 	gameLocal.Printf("num waves %d\n", waveSpawner::numWaves);
 	//spawn low level enemies 
 	gameLocal.Printf("spawning wave of %d :%s at %s\n", waveSpawner::numWaves * waveSpawner::weakMonsterCount, waveSpawner::weakMonsterString, spawnlocation.ToString());

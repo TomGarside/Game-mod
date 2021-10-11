@@ -607,6 +607,9 @@ idCVar si_serverURL(				"si_serverURL",				"",				CVAR_GAME | CVAR_SERVERINFO | 
 
 
 idCVar net_warnStale( "net_warnStale", "1", CVAR_INTEGER | CVAR_GAME | CVAR_NOCHEAT, "Warn stale entity occurences on network client - == 1: only on ClientStale call, > 1 all times" );
+// Tom Garside changes 
+idCVar t_numWaves("t_numWaves", "1", CVAR_INTEGER | CVAR_GAME, "Number of Waves");
+
 
 // RAVEN BEGIN
 // bdube: cvar helps

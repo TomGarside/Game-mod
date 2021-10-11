@@ -3025,9 +3025,17 @@ void Cmd_ShuffleTeams_f( const idCmdArgs& args ) {
 
 //TOM CHANGES 
 void Cmd_spawnWave_f(const idCmdArgs& args) {
-	gameLocal.Printf("spawning wave");
-	int wave = 1; 
-	if (args.Argv(1)) {
+	// load wave number from cvar 
+	idCVar* waveVar = cvarSystem->Find("t_numWaves");
+	int wave = waveVar->GetInteger();
+
+	//load light scale to set night time 
+	idCVar* lightScale = cvarSystem->Find("r_lightscale");
+	lightScale->SetFloat(0.2f);
+	gameLocal.Printf("Lightscale value :%f\n", lightScale->GetFloat());
+	gameLocal.Printf("argc: %i\n", args.Argc());
+	//load args for command 
+	if (args.Argc() > 1) {
 		wave = atoi(args.Argv(1));
 	}
 	// location for waves to spawn move to def/ constant?
@@ -3041,6 +3049,9 @@ void Cmd_spawnWave_f(const idCmdArgs& args) {
 	
 	waveSpawner monsterWave(origin, axis, "monster_berserker", "monster_gunner", "monster_gladiator", wave);
 	monsterWave.spawnWave();
+	//update wave 
+	
+	waveVar->SetInteger(++wave);
 
 }
 
