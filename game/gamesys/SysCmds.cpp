@@ -4,6 +4,7 @@
 
 #include "../Game_local.h"
 #include "../../waveSpawner.h"
+#include "../../digSite.h"
 // RAVEN BEGIN
 #include "../ai/AI.h"
 #if !defined(__GAME_PROJECTILE_H__)
@@ -3047,11 +3048,20 @@ void Cmd_spawnWave_f(const idCmdArgs& args) {
 
 	idMat3 axis;
 	
-	waveSpawner monsterWave(origin, axis, "monster_berserker", "monster_gunner", "monster_gladiator", wave);
+	waveSpawner monsterWave(origin, axis, "monster_strogg_marine", "monster_gunner", "monster_gladiator", wave);
 	monsterWave.spawnWave();
 	//update wave 
 	
 	waveVar->SetInteger(++wave);
+
+}
+
+void Cmd_buildSite_f(const idCmdArgs& args) {
+
+	idVec3 origin;
+	origin.Set(10920.37, -7967.3, 132.35);
+
+	digSite site(origin);
 
 }
 
@@ -3257,8 +3267,8 @@ void idGameLocal::InitConsoleCommands( void ) {
 
 	cmdSystem->AddCommand( "testClientModel",		Cmd_TestClientModel_f,		CMD_FL_GAME,				"" );
 // Tom Garside Changes 
-	cmdSystem->AddCommand( "spawnWave",               Cmd_spawnWave_f,          CMD_FL_GAME,                 "Spawn a wave of monsters");
-
+	cmdSystem->AddCommand( "spawnWave",             Cmd_spawnWave_f,          CMD_FL_GAME,                 "Spawn a wave of monsters");
+	cmdSystem->AddCommand( "buildSite",             Cmd_buildSite_f,          CMD_FL_GAME,                 "Generate dig site");
 
 #ifndef _FINAL
 	cmdSystem->AddCommand( "clientOverflowReliable", Cmd_ClientOverflowReliable_f, CMD_FL_GAME,				"" );
