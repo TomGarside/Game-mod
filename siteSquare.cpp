@@ -25,4 +25,24 @@ idVec3 siteSquare::getTopPoint() {
 
 void siteSquare::dropLoot() {
 	gameLocal.Printf("droping %s ", siteSquare::getLootStr());
-}
+		idDict	  dict;
+		float	  yaw;
+		idPlayer* player = gameLocal.GetLocalPlayer();
+		idEntity* newEnt = NULL;
+
+		// get player direction 
+		yaw = player->viewAngles.yaw;
+
+		dict.Set("classname", siteSquare::lootString);
+		dict.Set("angle", va("%f", yaw));
+
+		// validate location before spawning 
+		dict.Set("origin", siteSquare::topPoint.ToString());
+
+
+
+		// spawn new entity 
+		gameLocal.SpawnEntityDef(dict, &newEnt);
+		// play effect on spawn 
+		//gameLocal.PlayEffect(spawnArgs, "fx_impact", origin, axis, false, vec3_origin, true);	
+	}

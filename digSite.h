@@ -28,8 +28,8 @@ public:
 
 				// calc new vect for point 
 				idVec3 newPoint;
-				float newX = digSite::siteCorner.x + ((x+1) * digSite::squareSide);
-				float newY = digSite::siteCorner.y + ((y+1) * digSite::squareSide);
+				float newX = digSite::siteCorner.x - ((x+1) * digSite::squareSide);
+				float newY = digSite::siteCorner.y - ((y+1) * digSite::squareSide);
 				newPoint.Set(newX, newY, digSite::siteCorner.z);
 			  
 				digSite::Squares[x][y].setTopPoint(newPoint);
@@ -39,6 +39,8 @@ public:
 
 				// draw lines ?? 
 				gameLocal.Printf("built square %i %i loot %s\n", x + 1, y + 1, digSite::Squares[x][y].getLootStr());
+
+				digSite::Squares[x][y].dropLoot();
 			}
 
 		}
@@ -49,7 +51,8 @@ public:
 private:
 
 	char* digSite::genLootStr() {
-		return "TEST";
+		//placeholder 
+		return "weapon_machinegun";
 	}
 
 	
