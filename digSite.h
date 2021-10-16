@@ -1,7 +1,7 @@
 #ifndef __GAME_DIGSITE_H__
 #define __GAME_DIGSITE_H__
 
-#define SITEHEIGHT 20 
+#define SITEHEIGHT 10 
 #define SITEWIDTH  5 
 
 #include "./idlib/precompiled.h"
@@ -52,7 +52,7 @@ private:
 
 	char* digSite::genLootStr() {
 		//placeholder 
-		return "weapon_machinegun";
+		return "tom_flag";
 	}
 
 	
