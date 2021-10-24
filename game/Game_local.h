@@ -123,7 +123,8 @@ void gameError( const char *fmt, ... );
 #include "Pvs.h"
 
 #include "FreeView.h"
-
+// TOM GARSIDE
+#include "../digSite.h" 
 //============================================================================
 
 const int MAX_GAME_MESSAGE_SIZE		= 8192;
@@ -339,6 +340,9 @@ public:
 	bool					sortPushers;			// true if active lists needs to be reordered to place pushers at the front
 	bool					sortTeamMasters;		// true if active lists needs to be reordered to place physics team masters before their slaves
 	idDict					persistentLevelInfo;	// contains args that are kept around between levels
+
+// TOM G changes  
+	digSite                 site; 
 
 // RAVEN BEGIN
 // bdube: client entities

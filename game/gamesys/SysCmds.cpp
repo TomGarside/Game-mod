@@ -3060,9 +3060,7 @@ void Cmd_buildSite_f(const idCmdArgs& args) {
 
 	idVec3 origin;
 	origin.Set(10920.37, -7967.3, 132.35);
-
-	digSite site(origin);
-
+	gameLocal.site.buildSite(origin);
 }
 
 #ifndef _FINAL
@@ -3091,7 +3089,7 @@ so it can perform tab completion
 */
 void idGameLocal::InitConsoleCommands( void ) {
 // RAVEN BEGIN
-// jscott: typeinfo gone - didn't work, it was unfinished
+// jscott: typeinfo gone - didn't work, it was unfinished``
 //	cmdSystem->AddCommand( "listTypeInfo",			ListTypeInfo_f,				CMD_FL_GAME,				"list type info" );
 //	cmdSystem->AddCommand( "writeGameState",		WriteGameState_f,			CMD_FL_GAME,				"write game state" );
 //	cmdSystem->AddCommand( "testSaveGame",			TestSaveGame_f,				CMD_FL_GAME|CMD_FL_CHEAT,	"test a save game for a level" );
