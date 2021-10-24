@@ -43,7 +43,7 @@ public:
 	void spawnWave();
 
 private:
-	void spawnMonster(idVec3, char*);
+	void spawnMonster(idVec3, char*, char*);
 
 	idVec3 offSetLocation();
 

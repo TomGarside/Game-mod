@@ -7,7 +7,7 @@
 #include "game/Game_local.h"
 #include "game/spawner.h"
 
-void waveSpawner::spawnMonster(idVec3 spawnlocation, char* monsterString) {
+void waveSpawner::spawnMonster(idVec3 spawnlocation, char* monsterString, char* name) {
 		idDict	  dict;
 		float	  yaw;
 		idPlayer* player = gameLocal.GetLocalPlayer();
@@ -21,6 +21,10 @@ void waveSpawner::spawnMonster(idVec3 spawnlocation, char* monsterString) {
 
 		// validate location before spawning 
 		dict.Set("origin", spawnlocation.ToString());
+
+		// set name to track ?
+
+		dict.Set("name", name);
 		
 
 
@@ -43,18 +47,34 @@ void waveSpawner::spawnWave() {
 	//spawn low level enemies 
 	gameLocal.Printf("spawning wave of %d :%s at %s\n", waveSpawner::numWaves * waveSpawner::weakMonsterCount, waveSpawner::weakMonsterString, spawnlocation.ToString());
 	for (int e = 0; e < waveSpawner::numWaves * waveSpawner::weakMonsterCount; e++) {
-		// calc spawn location 
-				waveSpawner::spawnMonster(waveSpawner::offSetLocation(), waveSpawner::weakMonsterString);	 
+		// calc spawn location
+		char intStr[20];
+		itoa(e, intStr,10);
+		char name[100];
+		strcpy(name,"littleGuy");
+		strcat(name , intStr);
+		gameLocal.Printf("name %s\n",name);
+		waveSpawner::spawnMonster(waveSpawner::offSetLocation(), waveSpawner::weakMonsterString,name);
 	}
 	gameLocal.Printf("spawning wave of %d :%s at %s\n", waveSpawner::numWaves * waveSpawner::medMonsterCount, waveSpawner::medMonsterString, spawnlocation.ToString());
 	//spawn tough guys 
 	for (int e = 0; e < waveSpawner::numWaves * waveSpawner::medMonsterCount; e++) {
-			waveSpawner::spawnMonster(waveSpawner::offSetLocation(), waveSpawner::medMonsterString);
+		char intStr[20];
+		itoa(e, intStr, 10);
+		char name[100];
+		strcpy(name, "mediumGuy");
+		strcat(name, intStr);
+		waveSpawner::spawnMonster(waveSpawner::offSetLocation(), waveSpawner::medMonsterString,name );
 	}
 	// spawn really tough guy 
 	gameLocal.Printf("spawning wave of %d :%s at %s\n", waveSpawner::numWaves * waveSpawner::megaMonsterCount, waveSpawner::megaMonsterString, spawnlocation.ToString());
 	for (int e = 0; e < waveSpawner::numWaves * waveSpawner::megaMonsterCount; e++) {
-			waveSpawner::spawnMonster(waveSpawner::offSetLocation(), waveSpawner::megaMonsterString);
+		char intStr[20];
+		itoa(e, intStr, 10);
+		char name[100];
+		strcpy(name, "bigGuy");
+		strcat(name, intStr);
+		waveSpawner::spawnMonster(waveSpawner::offSetLocation(), waveSpawner::megaMonsterString,name);
 	}
 
    
