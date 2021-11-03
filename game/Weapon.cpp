@@ -656,6 +656,7 @@ void rvWeapon::Spawn ( void ) {
 	// Ammo
 	clipSize			= spawnArgs.GetInt( "clipSize" );
 	ammoRequired		= spawnArgs.GetInt( "ammoRequired" );
+	altAmmoRequired     = spawnArgs.GetInt("altAmmoRequired");
 	lowAmmo				= spawnArgs.GetInt( "lowAmmo" );
 	ammoType			= GetAmmoIndexForName( spawnArgs.GetString( "ammoType" ) );
 	maxAmmo				= owner->inventory.MaxAmmoForAmmoClass ( owner, GetAmmoNameForIndex ( ammoType ) );
@@ -981,6 +982,7 @@ void rvWeapon::InitDefs( void ) {
 			brassDict.Set( "spawnclass", "rvClientMoveable" );
 		}
 	}
+
 }
 
 /*
@@ -2513,7 +2515,8 @@ void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuse
 	//	owner->GetPosition(playerOrigin, PlayerAxis);
 	//	gameLocal.Printf("Player Position : x:%f y:%f z:%f", playerOrigin.x, playerOrigin.y, playerOrigin.z);
 	//}
-	
+	int ammoRequiredNow = ammoRequired; 
+
 	if ( !viewModel ) {
 		common->Warning( "NULL viewmodel %s\n", __FUNCTION__ );
 		return;
@@ -2522,19 +2525,24 @@ void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuse
 	if ( viewModel->IsHidden() ) {
 		return;
 	}
-
+	
+	if (altAttack) {
+		ammoRequiredNow = altAmmoRequired;
+	}
+	gameLocal.Printf("alt ammo required: %d", ammoRequiredNow);
 	// avoid all ammo considerations on an MP client
 	if ( !gameLocal.isClient ) {
 		// check if we're out of ammo or the clip is empty
-		int ammoAvail = owner->inventory.HasAmmo( ammoType, ammoRequired );
-		if ( !ammoAvail || ( ( clipSize != 0 ) && ( ammoClip <= 0 ) ) ) {
+		int ammoAvail = owner->inventory.HasAmmo( ammoType, ammoRequiredNow );
+		gameLocal.Printf("player ammo: % d\n", ammoAvail);
+		if ( !ammoAvail || ( ( clipSize != 0 ) && ( ammoClip - ammoRequiredNow < 0 ) ) ) {
 			return;
 		}
 
-		owner->inventory.UseAmmo( ammoType, ammoRequired );
-		if ( clipSize && ammoRequired ) {
+		owner->inventory.UseAmmo( ammoType, ammoRequiredNow);
+		if ( clipSize && ammoRequiredNow) {
  			clipPredictTime = gameLocal.time;	// mp client: we predict this. mark time so we're not confused by snapshots
-			ammoClip -= 1;
+			ammoClip -= ammoRequiredNow;
 		}
 
 		// wake up nearby monsters

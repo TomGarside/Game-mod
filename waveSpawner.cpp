@@ -27,7 +27,6 @@ void waveSpawner::spawnMonster(idVec3 spawnlocation, char* monsterString, char* 
 		dict.Set("name", name);
 		
 
-
 		// spawn new entity 
 		gameLocal.SpawnEntityDef(dict, &newEnt);
 		// play effect on spawn 

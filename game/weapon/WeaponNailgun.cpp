@@ -117,6 +117,7 @@ rvWeaponNailgun::Spawn
 ================
 */
 void rvWeaponNailgun::Spawn ( void ) {
+	GiveStuffToPlayer(owner, "wpmod_nailgun_seek", "1");
 	spawnArgs.GetFloat ( "lockRange", "1000", guideRange );
 	guideHoldTime = SEC2MS ( spawnArgs.GetFloat ( "lockHoldTime", "10" ) );
 	guideAquireTime = SEC2MS ( spawnArgs.GetFloat ( "lockAquireTime", ".1" ) );
@@ -131,6 +132,9 @@ void rvWeaponNailgun::Spawn ( void ) {
 	drumSpeed		= NAILGUN_DRUMSPEED_STOPPED;
 	drumSpeedIdeal	= drumSpeed;
 	drumMultiplier	= spawnArgs.GetFloat ( "drumSpeed" );
+
+
+	
 	
 	ExecuteState ( "ClaspClose" );	
 	SetState ( "Raise", 0 );	
@@ -670,7 +674,8 @@ stateResult_t rvWeaponNailgun::State_Fire( const stateParms_t& parms ) {
 				Attack ( true, 1, spread, 0.0f, 1.0f );
 				nextAttackTime = gameLocal.time + (altFireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
 			} else {
-				Attack ( false, 1, spread, 0.0f, 1.0f );
+				Attack ( false, 8, spread, 0.0f, 1.0f );
+
 				nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
 			}
 			
