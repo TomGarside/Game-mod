@@ -2529,12 +2529,12 @@ void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuse
 	if (altAttack) {
 		ammoRequiredNow = altAmmoRequired;
 	}
-	gameLocal.Printf("alt ammo required: %d", ammoRequiredNow);
+	
 	// avoid all ammo considerations on an MP client
 	if ( !gameLocal.isClient ) {
 		// check if we're out of ammo or the clip is empty
 		int ammoAvail = owner->inventory.HasAmmo( ammoType, ammoRequiredNow );
-		gameLocal.Printf("player ammo: % d\n", ammoAvail);
+
 		if ( !ammoAvail || ( ( clipSize != 0 ) && ( ammoClip - ammoRequiredNow < 0 ) ) ) {
 			return;
 		}

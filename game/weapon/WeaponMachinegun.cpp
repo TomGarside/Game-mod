@@ -247,7 +247,10 @@ stateResult_t rvWeaponMachinegun::State_Fire ( const stateParms_t& parms ) {
 				fireHeld = true;
 			} else {
 				nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
-				Attack ( false, randPellets, randSpread, 0, 1.0f );
+				idVec3 foobar;
+
+				gameLocal.site.dig(foobar, "shovel");
+				//Attack ( false, randPellets, randSpread, 0, 1.0f );
 				// block auto fire 
 				fireHeld = false;
 			}
