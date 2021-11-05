@@ -14,19 +14,18 @@ class digSite {
 	siteSquare Squares [SITEHEIGHT][SITEWIDTH];
 	float squareSide = 200.0f; 
 	int gridHeight;
-
 	int gridWidth;
+	int actionPoints = 10; 
+
 
 public:
-	digSite(){
-		// init varaibles 
-		//digSite::siteCorner = site;
-	}
+	digSite(){}
 
 	void buildSite(idVec3 origin);
-
+	void spawnWave();
 	void dig(idVec3 position, char* tool);
-
+	void resetAp();
+	void updateAp();
 private:
 
 

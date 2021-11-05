@@ -413,6 +413,8 @@ public:
 	bool					vsMsgState;
 
 	int						lastPickupTime;
+	int						monsterCount = 0; 
+	bool					nightTime = false; 
 //RAVEN BEGIN
 // asalmon: the eneny the player is most likely currently aiming at
 #ifdef _XBOX

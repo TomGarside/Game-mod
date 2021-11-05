@@ -42,6 +42,9 @@ class siteSquare {
 	// loot spawned 
 	int lootSpawned = 0; 
 
+	// excavated 
+	bool excavated = false; 
+
 public:
 
 	// dig in Square 
@@ -61,6 +64,9 @@ public:
 
 	void setCenter(idVec3);
 	idVec3 getCenter();
+
+	void setExcavated(bool);
+	bool getExcavated();
 
 	void dropFlags();
 	void dropLoot();

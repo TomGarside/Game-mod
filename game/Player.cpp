@@ -1852,13 +1852,13 @@ void idPlayer::Spawn( void ) {
 			gameLocal.Warning( "idPlayer::Spawn() - No hud for player." );
 		}
 
-		if ( gameLocal.isMultiplayer ) {
+		
 			if ( spawnArgs.GetString( "mphud", "", temp ) ) {
 				mphud = uiManager->FindGui( temp, true, false, true );
 			} else {
 				gameLocal.Warning( "idPlayer::Spawn() - No MP hud overlay while in MP.");
 			}
-		}
+		
 
 		if ( hud ) {
 			hud->Activate( true, gameLocal.time );
@@ -9282,39 +9282,41 @@ idPlayer::Think
 Called every tic for each player
 ==============
 */
-void idPlayer::Think( void ) {
-	renderEntity_t *headRenderEnt;
- 
-	if ( talkingNPC ) {
-		if ( !talkingNPC.IsValid() ) {
+void idPlayer::Think(void) {
+	renderEntity_t* headRenderEnt;
+
+	if (talkingNPC) {
+		if (!talkingNPC.IsValid()) {
 			talkingNPC = NULL;
-		} else {
-			idAI *talkingNPCAI = (idAI*)(talkingNPC.GetEntity());
-			if ( !talkingNPCAI ) {
+		}
+		else {
+			idAI* talkingNPCAI = (idAI*)(talkingNPC.GetEntity());
+			if (!talkingNPCAI) {
 				//wtf?
 				talkingNPC = NULL;
-			} else if ( talkingNPCAI->talkTarget != this || !talkingNPCAI->IsSpeaking() || DistanceTo( talkingNPCAI ) > 256.0f ) {
+			}
+			else if (talkingNPCAI->talkTarget != this || !talkingNPCAI->IsSpeaking() || DistanceTo(talkingNPCAI) > 256.0f) {
 				//forget about them, okay to talk to someone else now
 				talkingNPC = NULL;
 			}
 		}
 	}
 
-	if ( !gameLocal.usercmds ) {
+	if (!gameLocal.usercmds) {
 		return;
 	}
 
 #ifdef _XENON
 	// change the crosshair if it's modified
-	if ( cursor && weapon && g_crosshairColor.IsModified() ) {
-		weapon->UpdateCrosshairGUI( cursor );
-		cursor->HandleNamedEvent( "weaponChange" );
+	if (cursor && weapon && g_crosshairColor.IsModified()) {
+		weapon->UpdateCrosshairGUI(cursor);
+		cursor->HandleNamedEvent("weaponChange");
 		g_crosshairColor.ClearModified();
 	}
 #endif
 
- 	// Dont do any thinking if we are in modview
-	if ( gameLocal.editors & EDITOR_MODVIEW || gameEdit->PlayPlayback() ) {
+	// Dont do any thinking if we are in modview
+	if (gameLocal.editors & EDITOR_MODVIEW || gameEdit->PlayPlayback()) {
 		// calculate the exact bobbed view position, which is used to
 		// position the view weapon, among other things
 		CalculateFirstPersonView();
@@ -9323,67 +9325,68 @@ void idPlayer::Think( void ) {
 		CalculateRenderView();
 
 		FreeModelDef();
-		
-		if ( weapon ) {
+
+		if (weapon) {
 			weapon->GetWorldModel()->FreeModelDef();
 		}
 
- 		if ( head.GetEntity() ) {
+		if (head.GetEntity()) {
 			head->FreeModelDef();
 		}
 
-		if ( clientHead ) {
+		if (clientHead) {
 			clientHead->FreeEntityDef();
 		}
 
 		return;
 	}
 
-	if( reloadModel ) {
-		LoadDeferredModel(); 
+	if (reloadModel) {
+		LoadDeferredModel();
 		reloadModel = false;
 	}
 
-	gameEdit->RecordPlayback( usercmd, this );
+	gameEdit->RecordPlayback(usercmd, this);
 
 	// latch button actions
 	oldButtons = usercmd.buttons;
 
 	// grab out usercmd
 	usercmd_t oldCmd = usercmd;
-	usercmd = gameLocal.usercmds[ entityNumber ];
+	usercmd = gameLocal.usercmds[entityNumber];
 	buttonMask &= usercmd.buttons;
 	usercmd.buttons &= ~buttonMask;
 
 	HandleObjectiveInput();
-	if ( objectiveSystemOpen ) {
+	if (objectiveSystemOpen) {
 		HandleCheats();
-	} else {
+	}
+	else {
 		ClearCheatState();
 	}
 
 	aasSensor->Update();
 
-	if ( gameLocal.inCinematic && gameLocal.skipCinematic ) {
+	if (gameLocal.inCinematic && gameLocal.skipCinematic) {
 		// we need to let the camera think inside of this routine
 		CalculateRenderView();
 		return;
 	}
 
- 	// clear the ik before we do anything else so the skeleton doesn't get updated twice
- 	walkIK.ClearJointMods();
+	// clear the ik before we do anything else so the skeleton doesn't get updated twice
+	walkIK.ClearJointMods();
 
 	// if this is the very first frame of the map, set the delta view angles
 	// based on the usercmd angles
-	if ( !spawnAnglesSet && ( gameLocal.GameState() != GAMESTATE_STARTUP ) ) {
+	if (!spawnAnglesSet && (gameLocal.GameState() != GAMESTATE_STARTUP)) {
 		spawnAnglesSet = true;
-		SetViewAngles( spawnAngles );
+		SetViewAngles(spawnAngles);
 		oldFlags = usercmd.flags;
 	}
 
-	if ( gameLocal.inCinematic || influenceActive 
+	if (gameLocal.inCinematic || influenceActive
 #ifdef _XENON
-		|| objectiveSystemOpen 
+		|| objectiveSystemOpen
 #endif
 		) {
 		usercmd.forwardmove = 0;
@@ -9391,35 +9394,36 @@ void idPlayer::Think( void ) {
 		usercmd.upmove = 0;
 	}
 
-	if( gameLocal.GetIsFrozen() && gameLocal.gameType == GAME_DEADZONE )
+	if (gameLocal.GetIsFrozen() && gameLocal.gameType == GAME_DEADZONE)
 	{
 		usercmd.forwardmove = 0;
 		usercmd.rightmove = 0;
 		usercmd.upmove = 0;
 	}
-	
+
 	// zooming
 	bool zoom = (usercmd.buttons & BUTTON_ZOOM) && CanZoom();
-	if ( zoom != zoomed ) {
-		if ( zoom ) {
-			ProcessEvent ( &EV_Player_ZoomIn );
-		} else {
-			ProcessEvent ( &EV_Player_ZoomOut );
+	if (zoom != zoomed) {
+		if (zoom) {
+			ProcessEvent(&EV_Player_ZoomIn);
+		}
+		else {
+			ProcessEvent(&EV_Player_ZoomOut);
 		}
 
-		if ( vehicleController.IsDriving( ) ) {
+		if (vehicleController.IsDriving()) {
 #ifdef _XENON
-			usercmdGen->SetSlowJoystick( zoom ? pm_zoomedSlow.GetInteger() : 100 );
+			usercmdGen->SetSlowJoystick(zoom ? pm_zoomedSlow.GetInteger() : 100);
 #else
-			cvarSystem->SetCVarInteger( "pm_isZoomed", zoom ? pm_zoomedSlow.GetInteger() : 0 );
+			cvarSystem->SetCVarInteger("pm_isZoomed", zoom ? pm_zoomedSlow.GetInteger() : 0);
 #endif
 		}
 
 	}
 
-	if ( IsInVehicle ( ) ) {	
-		vehicleController.SetInput ( usercmd, viewAngles );
-				
+	if (IsInVehicle()) {
+		vehicleController.SetInput(usercmd, viewAngles);
+
 		// calculate the exact bobbed view position, which is used to
 		// position the view weapon, among other things
 		CalculateFirstPersonView();
@@ -9430,17 +9434,18 @@ void idPlayer::Think( void ) {
 		thinkFlags |= TH_PHYSICS;
 		RunPhysics();
 
-		if ( health > 0 ) {
+		if (health > 0) {
 			TouchTriggers();
 		}
 
 		UpdateLocation();
-		
-		if ( !fl.hidden ) {
+
+		if (!fl.hidden) {
 			UpdateAnimation();
 			Present();
 			LinkCombat();
-		} else {
+		}
+		else {
 			UpdateModel();
 		}
 
@@ -9448,10 +9453,10 @@ void idPlayer::Think( void ) {
 		//	ejected from the vehicle (and I don't think we'd want that even though we do have the option of forcing it..)
 		//	and since you are still in the vehicle, EvaluateControls (which covers the logic below for player usercmds)
 		//	will never get called.
-		if ( pfl.objectiveFailed ) 
+		if (pfl.objectiveFailed)
 		{
-			if ( (	gameLocal.time > minRespawnTime && (usercmd.buttons & BUTTON_ATTACK)) ||
-				gameLocal.time > maxRespawnTime )
+			if ((gameLocal.time > minRespawnTime && (usercmd.buttons & BUTTON_ATTACK)) ||
+				gameLocal.time > maxRespawnTime)
 			{
 				gameLocal.sessionCommand = "died";
 			}
@@ -9461,16 +9466,16 @@ void idPlayer::Think( void ) {
 	}
 
 	// log movement changes for weapon bobbing effects
-	if ( usercmd.forwardmove != oldCmd.forwardmove ) {
-		loggedAccel_t	*acc = &loggedAccel[currentLoggedAccel&(NUM_LOGGED_ACCELS-1)];
+	if (usercmd.forwardmove != oldCmd.forwardmove) {
+		loggedAccel_t* acc = &loggedAccel[currentLoggedAccel & (NUM_LOGGED_ACCELS - 1)];
 		currentLoggedAccel++;
 		acc->time = gameLocal.time;
 		acc->dir[0] = usercmd.forwardmove - oldCmd.forwardmove;
 		acc->dir[1] = acc->dir[2] = 0;
 	}
 
-	if ( usercmd.rightmove != oldCmd.rightmove ) {
-		loggedAccel_t	*acc = &loggedAccel[currentLoggedAccel&(NUM_LOGGED_ACCELS-1)];
+	if (usercmd.rightmove != oldCmd.rightmove) {
+		loggedAccel_t* acc = &loggedAccel[currentLoggedAccel & (NUM_LOGGED_ACCELS - 1)];
 		currentLoggedAccel++;
 		acc->time = gameLocal.time;
 		acc->dir[1] = usercmd.rightmove - oldCmd.rightmove;
@@ -9478,62 +9483,62 @@ void idPlayer::Think( void ) {
 	}
 
 	// freelook centering
-	if ( ( usercmd.buttons ^ oldCmd.buttons ) & BUTTON_MLOOK ) {
-		centerView.Init( gameLocal.time, 200, viewAngles.pitch, 0 );
+	if ((usercmd.buttons ^ oldCmd.buttons) & BUTTON_MLOOK) {
+		centerView.Init(gameLocal.time, 200, viewAngles.pitch, 0);
 	}
 
 	// if we have an active gui, we will unrotate the view angles as
 	// we turn the mouse movements into gui events
-	idUserInterface *gui = ActiveGui();
-	if ( gui && gui != focusUI ) {
-		RouteGuiMouse( gui );
+	idUserInterface* gui = ActiveGui();
+	if (gui && gui != focusUI) {
+		RouteGuiMouse(gui);
 	}
 
 	// set the push velocity on the weapon before running the physics
-	if ( weapon ) {
-		weapon->SetPushVelocity( physicsObj.GetPushedLinearVelocity() );
+	if (weapon) {
+		weapon->SetPushVelocity(physicsObj.GetPushedLinearVelocity());
 	}
 
 	EvaluateControls();
 
 
-// RAVEN BEGIN
-// abahr
-	if( !noclip && !spectating ) {
+	// RAVEN BEGIN
+	// abahr
+	if (!noclip && !spectating) {
 		UpdateGravity();
 	}
-// RAVEN END
+	// RAVEN END
 
 	Move();
 
-	if ( !g_stopTime.GetBool() ) {
- 		if ( !noclip && !spectating && ( health > 0 ) && !IsHidden() ) {
- 			TouchTriggers();
- 		}
+	if (!g_stopTime.GetBool()) {
+		if (!noclip && !spectating && (health > 0) && !IsHidden()) {
+			TouchTriggers();
+		}
 
 		// not done on clients for various reasons. don't do it on server and save the sound channel for other things
-		if ( !gameLocal.isMultiplayer ) {
-			if ( g_useDynamicProtection.GetBool() && dynamicProtectionScale < 1.0f && gameLocal.time - lastDmgTime > 500 ) {
-				if ( dynamicProtectionScale < 1.0f ) {
+		if (!gameLocal.isMultiplayer) {
+			if (g_useDynamicProtection.GetBool() && dynamicProtectionScale < 1.0f && gameLocal.time - lastDmgTime > 500) {
+				if (dynamicProtectionScale < 1.0f) {
 					dynamicProtectionScale += 0.05f;
 				}
-				if ( dynamicProtectionScale > 1.0f ) {
+				if (dynamicProtectionScale > 1.0f) {
 					dynamicProtectionScale = 1.0f;
 				}
 			}
 		}
 
- 		// update GUIs, Items, and character interactions
+		// update GUIs, Items, and character interactions
 		UpdateFocus();
- 		
- 		UpdateLocation();
 
-	 	// update player script
- 		UpdateState(); 
+		UpdateLocation();
+
+		// update player script
+		UpdateState();
 
 		// service animations
-		if ( !spectating && !af.IsActive() ) {
-    		UpdateConditions();
+		if (!spectating && !af.IsActive()) {
+			UpdateConditions();
 			UpdateAnimState();
 			CheckBlink();
 		}
@@ -9542,7 +9547,7 @@ void idPlayer::Think( void ) {
 		pfl.pain = false;
 	}
 
-	if ( !af.IsActive() ) {
+	if (!af.IsActive()) {
 		AdjustBodyAngles();
 	}
 
@@ -9553,70 +9558,77 @@ void idPlayer::Think( void ) {
 	// this may use firstPersonView, or a thirdPeroson / camera view
 	CalculateRenderView();
 
-	if ( spectating ) {
+	if (spectating) {
 		UpdateSpectating();
-	} else if ( health > 0 && !gameLocal.inCinematic ) {
+	}
+	else if (health > 0 && !gameLocal.inCinematic) {
 		UpdateWeapon();
 	}
 
 	UpdateAir();
-	
+
 	UpdateHud();
 
 	UpdatePowerUps();
 
-	UpdateDeathSkin( false );
+	UpdateDeathSkin(false);
 
-	UpdateDeathShader( deathStateHitch );
+	UpdateDeathShader(deathStateHitch);
 
-	if( gameLocal.isMultiplayer ) {
-		if( clientHead.GetEntity() ) {
+	if (gameLocal.isMultiplayer) {
+		if (clientHead.GetEntity()) {
 			headRenderEnt = clientHead.GetEntity()->GetRenderEntity();
-		} else {
+		}
+		else {
 			headRenderEnt = NULL;
 		}
-	} else {
- 		if ( head.GetEntity() ) {
- 			headRenderEnt = head.GetEntity()->GetRenderEntity();
- 		} else {
- 			headRenderEnt = NULL;
- 		}
 	}
- 
- 	if ( headRenderEnt ) {
-		if ( powerUpSkin ) {
+	else {
+		if (head.GetEntity()) {
+			headRenderEnt = head.GetEntity()->GetRenderEntity();
+		}
+		else {
+			headRenderEnt = NULL;
+		}
+	}
+
+	if (headRenderEnt) {
+		if (powerUpSkin) {
 			headRenderEnt->customSkin = powerUpSkin;
-		} else if ( influenceSkin ) {
- 			headRenderEnt->customSkin = influenceSkin;
- 		} else {
- 			headRenderEnt->customSkin = headSkin;
- 		}
- 		headRenderEnt->suppressSurfaceInViewID = entityNumber + 1;
- 	}
+		}
+		else if (influenceSkin) {
+			headRenderEnt->customSkin = influenceSkin;
+		}
+		else {
+			headRenderEnt->customSkin = headSkin;
+		}
+		headRenderEnt->suppressSurfaceInViewID = entityNumber + 1;
+	}
 
 	// always show your own shadow
-	if( entityNumber == gameLocal.localClientNum ) {
+	if (entityNumber == gameLocal.localClientNum) {
 		renderEntity.suppressLOD = 1;
-		if( headRenderEnt ) {
+		if (headRenderEnt) {
 			headRenderEnt->suppressLOD = 1;
 		}
-	} else {
+	}
+	else {
 		renderEntity.suppressLOD = 0;
-		if( headRenderEnt ) {
+		if (headRenderEnt) {
 			headRenderEnt->suppressLOD = 0;
 		}
 	}
 
-	DrawShadow( headRenderEnt );
+	DrawShadow(headRenderEnt);
 
 	// never cast shadows from our first-person muzzle flashes
 	// FIXME: get first person flashlight into this 
 	renderEntity.suppressShadowInLightID = rvWeapon::WPLIGHT_MUZZLEFLASH * 100 + entityNumber;
- 	if ( headRenderEnt ) {
- 		headRenderEnt->suppressShadowInLightID = rvWeapon::WPLIGHT_MUZZLEFLASH * 100 + entityNumber;
-   	}
+	if (headRenderEnt) {
+		headRenderEnt->suppressShadowInLightID = rvWeapon::WPLIGHT_MUZZLEFLASH * 100 + entityNumber;
+	}
 
- 	if ( !g_stopTime.GetBool() ) {
+	if (!g_stopTime.GetBool()) {
 		UpdateAnimation();
 
 		Present();
@@ -9624,25 +9636,57 @@ void idPlayer::Think( void ) {
 		LinkCombat();
 	}
 
- 	if ( !( thinkFlags & TH_THINK ) ) {
-		common->DPrintf( "player %d not thinking?\n", entityNumber );
+	if (!(thinkFlags & TH_THINK)) {
+		common->DPrintf("player %d not thinking?\n", entityNumber);
 	}
 
-	if ( g_showEnemies.GetBool() ) {
-		idActor *ent;
+	if (g_showEnemies.GetBool()) {
+		idActor* ent;
 		int num = 0;
-		for( ent = enemyList.Next(); ent != NULL; ent = ent->enemyNode.Next() ) {
-			common->DPrintf( "enemy (%d)'%s'\n", ent->entityNumber, ent->name.c_str() );
-			gameRenderWorld->DebugBounds( colorRed, ent->GetPhysics()->GetBounds().Expand( 2 ), ent->GetPhysics()->GetOrigin() );
+		for (ent = enemyList.Next(); ent != NULL; ent = ent->enemyNode.Next()) {
+			common->DPrintf("enemy (%d)'%s'\n", ent->entityNumber, ent->name.c_str());
+			gameRenderWorld->DebugBounds(colorRed, ent->GetPhysics()->GetBounds().Expand(2), ent->GetPhysics()->GetOrigin());
 			num++;
 		}
-		common->DPrintf( "%d: enemies\n", num );
+		common->DPrintf("%d: enemies\n", num);
 	}
 
-	if ( !inBuyZonePrev )
+	if (!inBuyZonePrev)
 		inBuyZone = false;
 
 	inBuyZonePrev = false;
+	
+	//load light scale to set night time 
+	idCVar* lightScale = cvarSystem->Find("r_lightscale");
+	if (nightTime) {
+		
+		lightScale->SetFloat(0.2f);
+	}
+	else {
+			lightScale->SetFloat(1.0f);
+	}
+	gameLocal.Printf("night Time : %d", nightTime);
+	for (int e = 0; e < monsterCount; e++) {
+		char intStr[20];
+		itoa(e, intStr, 10);
+		char innerName[100];
+		strcpy(innerName, "badGuy");
+		strcat(innerName, intStr);
+
+		if (gameLocal.FindEntity(innerName)) {
+
+			if (gameLocal.FindEntity(innerName)->health > 0) {
+				nightTime = true; 
+				return;
+			}
+			
+		}
+	}
+	if (nightTime) {
+		nightTime = false;
+		gameLocal.site.resetAp();
+		gameLocal.Printf("cleaned up the bad Guys");
+	}
 }
 
 /*
@@ -13452,14 +13496,13 @@ idPlayer::GUIMainNotice
 =====================
 */
 void idPlayer::GUIMainNotice( const char* message, bool persist ) {
-	if( !gameLocal.isMultiplayer || !mphud ) {
-		return;
-	}
+	//if( !gameLocal.isMultiplayer || !mphud ) {
+	//	return;
+	//}
 	
-	mphud->SetStateString( "main_notice_text", message );
-	mphud->SetStateBool( "main_notice_persist", persist );
-	mphud->StateChanged( gameLocal.time );
-	mphud->HandleNamedEvent( "main_notice" );
+	hud->SetStateString( "quickSaveMsg", message );
+	hud->StateChanged( gameLocal.time );
+	hud->HandleNamedEvent("saveMessage");
 }
 
 /*
@@ -13468,14 +13511,11 @@ idPlayer::GUIFragNotice
 =====================
 */
 void idPlayer::GUIFragNotice( const char* message, bool persist ) {
-	if( !gameLocal.isMultiplayer || !mphud ) {
-		return;
-	}
 
-	mphud->SetStateString( "frag_notice_text", message );
-	mphud->SetStateBool( "frag_notice_persist", persist );
-	mphud->StateChanged( gameLocal.time );
-	mphud->HandleNamedEvent( "frag_notice" );
+
+	hud->SetStateString( "actionPointsMsg", message );
+	hud->StateChanged( gameLocal.time );
+	hud->HandleNamedEvent("saveMessage");
 }
 
 /*

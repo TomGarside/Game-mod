@@ -62,6 +62,12 @@ void siteSquare::setCenter(idVec3 newTopPoint) {
 idVec3 siteSquare::getCenter() {
 	return siteSquare::squareCenter;
 }
+bool siteSquare::getExcavated() {
+	return siteSquare::excavated;
+}
+void siteSquare::setExcavated(bool ex) {
+	siteSquare::excavated = ex;
+}
 void siteSquare::setLootDepth(int depth) {
 	siteSquare::lootDepth = depth;
 }
@@ -86,6 +92,10 @@ void siteSquare::dropLoot() {
 		dict.Set("origin", siteSquare::squareCenter.ToString());
 
 
+		char dropVar[100];
+		strcpy(dropVar, "You Found ");
+		strcat(dropVar, siteSquare::lootString);
+		player->GUIMainNotice(dropVar);
 
 		// spawn new entity 
 		gameLocal.SpawnEntityDef(dict, &newEnt);

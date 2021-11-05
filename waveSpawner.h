@@ -23,6 +23,8 @@ class waveSpawner {
 	int medMonsterCount = 2;
 	int megaMonsterCount = 1;
 
+	//idEntity* monsters[1000]; 
+
 	
 public:
 	waveSpawner(idVec3 spawnLocation, idMat3 direction, char* weakMonsterString,char* medMonsterString, char* megaMonsterString, int numWaves ) {
@@ -43,7 +45,7 @@ public:
 	void spawnWave();
 
 private:
-	void spawnMonster(idVec3, char*, char*);
+	void spawnMonster(idVec3, char*, char*, int);
 
 	idVec3 offSetLocation();
 
