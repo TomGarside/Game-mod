@@ -13530,6 +13530,26 @@ void idPlayer::GUIFragNotice( const char* message, bool persist ) {
 
 /*
 =====================
+idPlayer::hideHelp
+=====================
+*/
+void idPlayer::hideHelp() {
+	hud->HandleNamedEvent("hideHelp");
+	helpVisible = false;
+
+}
+/*
+=====================
+idPlayer::showHelp
+=====================
+*/
+void idPlayer::showHelp() {
+	hud->HandleNamedEvent("ShowHelp");
+	helpVisible = true; 
+}
+
+/*
+=====================
 idPlayer::SetHudOverlay
 =====================
 */

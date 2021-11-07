@@ -766,6 +766,10 @@ public:
 	void					SetShowHud( bool showHud );
 	bool					GetShowHud( void );
 
+	void                    showHelp();
+	void                    hideHelp();
+	bool                    helpVisible = true; 
+
 
 	// mekberg: wrap saveMessages
 	void					SaveMessage( void );

@@ -3053,6 +3053,18 @@ void Cmd_spawnWave_f(const idCmdArgs& args) {
 	//update wave 
 	
 	waveVar->SetInteger(++wave);
+	
+
+}
+void Cmd_Help_f(const idCmdArgs& args) {
+	if (gameLocal.GetLocalPlayer()->helpVisible) {
+		gameLocal.Printf("hiding help");
+		gameLocal.GetLocalPlayer()->hideHelp();
+	}
+	else {
+		gameLocal.Printf("showing help");
+		gameLocal.GetLocalPlayer()->showHelp();
+	}
 
 }
 
@@ -3267,6 +3279,7 @@ void idGameLocal::InitConsoleCommands( void ) {
 // Tom Garside Changes 
 	cmdSystem->AddCommand( "spawnWave",             Cmd_spawnWave_f,          CMD_FL_GAME,                 "Spawn a wave of monsters");
 	cmdSystem->AddCommand( "buildSite",             Cmd_buildSite_f,          CMD_FL_GAME,                 "Generate dig site");
+	cmdSystem->AddCommand( "flipHelp",              Cmd_Help_f,               CMD_FL_GAME,                  "togle help menu");
 
 #ifndef _FINAL
 	cmdSystem->AddCommand( "clientOverflowReliable", Cmd_ClientOverflowReliable_f, CMD_FL_GAME,				"" );
