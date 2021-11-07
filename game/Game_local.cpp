@@ -333,7 +333,7 @@ void idGameLocal::Clear( void ) {
 	playerConnectedAreas.i = -1;
 	playerConnectedAreas.h = -1;
 	gamestate = GAMESTATE_UNINITIALIZED;
-	skipCinematic = false;
+	skipCinematic = true;
 	influenceActive = false;
 
 	localClientNum = 0;
@@ -1441,7 +1441,7 @@ void idGameLocal::LoadMap( const char *mapName, int randseed ) {
 	aiManager.Clear();
 // RAVEN END
 
-	skipCinematic = false;
+	skipCinematic = true;
 	inCinematic = false;
 	cinematicSkipTime = 0;
 	cinematicStopTime = 0;
@@ -1887,6 +1887,8 @@ void idGameLocal::MapPopulate( int instance ) {
 	// before the physics are run so entities can bind correctly
 	Printf( "------------ Processing events --------------\n" );
 	idEvent::ServiceEvents();
+	Printf("when does this happen?");
+	
 }
 
 /*
@@ -1978,6 +1980,8 @@ void idGameLocal::InitFromNewMap( const char *mapName, idRenderWorld *renderWorl
 	gamestate = GAMESTATE_ACTIVE;
 
 	Printf( "---------------------------------------------\n" );
+	Printf("Found the spot\n");
+	
 }
 
 /*
@@ -3746,11 +3750,13 @@ TIME_THIS_SCOPE("idGameLocal::RunFrame - gameDebug.BeginFrame()");
 		skipCinematic = false;		
 	}
 
+
 	// show any debug info for this frame
 	RunDebugInfo();
 	D_DrawDebugLines();
 
 	g_simpleItems.ClearModified();
+
 	return ret;
 }
 // RAVEN END
@@ -6213,6 +6219,7 @@ idGameLocal::SkipCinematic
 =============
 */
 bool idGameLocal::SkipCinematic( void ) {
+	Printf("skiping cinematic\n");
 	if ( camera ) {
 		if ( camera->spawnArgs.GetBool( "disconnect" ) ) {
 			camera->spawnArgs.SetBool( "disconnect", false );
@@ -6233,6 +6240,11 @@ bool idGameLocal::SkipCinematic( void ) {
 		skipCinematic = true;
 		cinematicMaxSkipTime = gameLocal.time + SEC2MS( g_cinematicMaxSkipTime.GetFloat() );
 	}
+	
+
+
+
+
 
 	return true;
 }

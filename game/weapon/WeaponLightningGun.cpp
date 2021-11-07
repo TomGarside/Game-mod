@@ -76,7 +76,6 @@ protected:
 
 private:
 
-	void				Attack					( idEntity* ent, const idVec3& dir, float power = 1.0f );
 
 	void				UpdateChainLightning	( void );
 	void				StopChainLightning		( void );
@@ -299,9 +298,9 @@ void rvWeaponLightningGun::Think ( void ) {
 	currentPath.normal = tr.c.normal;
 	currentPath.target = gameLocal.entities[tr.c.entityNum];
 
-	UpdateChainLightning();
+	//UpdateChainLightning();
 	
-	UpdateEffects( origin );
+	//UpdateEffects( origin );
 	
 	MuzzleFlash();
 
@@ -317,11 +316,9 @@ void rvWeaponLightningGun::Think ( void ) {
 		dir.Normalize ( );
 		
 		nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
-		Attack ( currentPath.target, dir, power );
-		for ( i = 0; i < chainLightning.Num(); i ++, power *= 0.75f ) {
-			Attack ( chainLightning[i].target, chainLightning[i].normal, power );
-		}
-
+		StartSound("snd_fire", SND_CHANNEL_WEAPON, 0, false, NULL);
+		StartSound("snd_fire_stereo", SND_CHANNEL_ITEM, 0, false, NULL);
+		Attack(false, 16, spread, 0, 1.0f);
 		statManager->WeaponFired( owner, owner->GetCurrentWeapon(), chainLightning.Num() + 1 );
 	}
 
@@ -331,35 +328,7 @@ void rvWeaponLightningGun::Think ( void ) {
 	}
 }
 
-/*
-================
-rvWeaponLightningGun::Attack
-================
-*/
-void rvWeaponLightningGun::Attack ( idEntity* ent, const idVec3& dir, float power ) {
-	// Double check
-	if ( !ent || !ent->fl.takedamage ) {
-		return;
-	}
 
-	// Start a lightning crawl effect every so often
-	// we don't synchronize it, so let's not show it in multiplayer for a listen host. also fixes seeing it on the host from other instances
-	if ( !gameLocal.isMultiplayer && gameLocal.time > nextCrawlTime ) {
-		if ( ent->IsType( idActor::GetClassType() ) ) {
-			rvClientCrawlEffect* effect;
-			effect = new rvClientCrawlEffect( gameLocal.GetEffect( weaponDef->dict, "fx_crawl" ), ent, SEC2MS( spawnArgs.GetFloat ( "crawlTime", ".2" ) ) );
-			effect->Play( gameLocal.time, false );
-		}
-	}	
-
-// RAVEN BEGIN
-// mekberg: stats
-	if( owner->IsType( idPlayer::GetClassType() ) && ent->IsType( idActor::GetClassType() ) && ent != owner && !((idPlayer*)owner)->pfl.dead ) {
-		statManager->WeaponHit( (idActor*)owner, ent, owner->GetCurrentWeapon() );
-	}
-// RAVEN END
-	ent->Damage( owner, owner, dir, spawnArgs.GetString ( "def_damage" ), power * owner->PowerUpModifier( PMOD_PROJECTILE_DAMAGE ), 0 );
-}
 
 /*
 ================
@@ -817,8 +786,7 @@ stateResult_t rvWeaponLightningGun::State_Fire( const stateParms_t& parms ) {
 	};	
 	switch ( parms.stage ) {
 		case STAGE_INIT:
-			StartSound( "snd_fire", SND_CHANNEL_WEAPON, 0, false, NULL );
-			StartSound( "snd_fire_stereo", SND_CHANNEL_ITEM, 0, false, NULL );
+			
 			StartSound( "snd_fire_loop", SND_CHANNEL_BODY2, 0, false, NULL );
 			
 			viewModel->SetShaderParm( 6, 0 );
@@ -841,7 +809,7 @@ stateResult_t rvWeaponLightningGun::State_Fire( const stateParms_t& parms ) {
 				PlayCycle( ANIMCHANNEL_ALL, "shoot_loop", 0 );
 				if ( !gameLocal.isMultiplayer
 					&& owner == gameLocal.GetLocalPlayer() ) {
-					owner->playerView.SetShakeParms( MS2SEC(gameLocal.GetTime() + 500), 2.0f );
+					//owner->playerView.SetShakeParms( MS2SEC(gameLocal.GetTime() + 500), 2.0f );
 				}
 			}
 			return SRESULT_WAIT;

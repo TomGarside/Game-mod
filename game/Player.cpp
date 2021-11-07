@@ -9655,6 +9655,17 @@ void idPlayer::Think(void) {
 		inBuyZone = false;
 
 	inBuyZonePrev = false;
+
+	//init 
+	idVec3 origin;
+	origin.Set(10920.37, -7967.3, 132.35);
+	if (gameLocal.inCinematic) {
+		gameLocal.SkipCinematic();
+		if (true) {
+			gameLocal.site.buildSite(origin);
+			Teleport(origin, viewBobAngles, gameLocal.FindEntity("tom_spawn_flag"));
+		}
+	}
 	
 	//load light scale to set night time 
 	idCVar* lightScale = cvarSystem->Find("r_lightscale");
@@ -9665,7 +9676,8 @@ void idPlayer::Think(void) {
 	else {
 			lightScale->SetFloat(1.0f);
 	}
-	gameLocal.Printf("night Time : %d", nightTime);
+	
+	
 	for (int e = 0; e < monsterCount; e++) {
 		char intStr[20];
 		itoa(e, intStr, 10);
@@ -13496,13 +13508,11 @@ idPlayer::GUIMainNotice
 =====================
 */
 void idPlayer::GUIMainNotice( const char* message, bool persist ) {
-	//if( !gameLocal.isMultiplayer || !mphud ) {
-	//	return;
-	//}
 	
 	hud->SetStateString( "quickSaveMsg", message );
 	hud->StateChanged( gameLocal.time );
 	hud->HandleNamedEvent("saveMessage");
+
 }
 
 /*

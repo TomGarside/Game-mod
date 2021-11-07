@@ -96,7 +96,7 @@ void siteSquare::dropLoot() {
 		strcpy(dropVar, "You Found ");
 		strcat(dropVar, siteSquare::lootString);
 		player->GUIMainNotice(dropVar);
-
+		siteSquare::excavated = true;
 		// spawn new entity 
 		gameLocal.SpawnEntityDef(dict, &newEnt);
 		// play effect on spawn 

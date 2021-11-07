@@ -31,7 +31,6 @@ void waveSpawner::spawnMonster(idVec3 spawnlocation, char* monsterString, char* 
 		dict.Set("origin", spawnlocation.ToString());
 
 		// set name to track ?
-
 		dict.Set("name", innerName);
 		
 

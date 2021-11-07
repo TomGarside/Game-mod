@@ -3,6 +3,10 @@
 
 #define SITEHEIGHT 10 
 #define SITEWIDTH  5 
+#define ORIGINX 10920.37
+#define ORIGINY -7967.3
+#define ORIGINZ 132.35
+#define ACTIONPOINTS 10
 
 #include "./idlib/precompiled.h"
 #include "game/Game_local.h"
@@ -26,6 +30,7 @@ public:
 	void dig(idVec3 position, char* tool);
 	void resetAp();
 	void updateAp();
+	void dropTelePoint();
 private:
 
 
