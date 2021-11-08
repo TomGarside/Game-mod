@@ -22,6 +22,7 @@ class waveSpawner {
 	int weakMonsterCount = 5;
 	int medMonsterCount = 2;
 	int megaMonsterCount = 1;
+	int count = 0;
 
 	//idEntity* monsters[1000]; 
 

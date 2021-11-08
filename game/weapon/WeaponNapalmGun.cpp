@@ -399,8 +399,33 @@ stateResult_t WeaponNapalmGun::State_Fire( const stateParms_t& parms ) {
 				PlayAnim ( ANIMCHANNEL_ALL, "idle", parms.blendFrames );
 				//fireHeld = true;
 			} else {
+
+				idVec3		end;
+				trace_t		tr;
 				nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
-				Attack ( false, 1, spread, 0, 1.0f );
+				idClip* clipWorld = gameLocal.GetEntityClipWorld(owner);
+				idVec3 playerViewOrigin = owner->firstPersonViewOrigin;
+				idMat3 playerViewAxis = owner->firstPersonViewAxis;
+				
+				end = playerViewOrigin + ((100 * 16) * playerViewAxis[0]);
+				end += (playerViewAxis[1]);
+				end += (playerViewAxis[2]);
+
+				clipWorld->TracePoint(tr, playerViewOrigin, end, 1, owner);
+
+				gameLocal.Printf("tr fraction %f\n", tr.fraction);
+				// trace met somthing 
+				if (tr.fraction < 1.0f) {
+					gameLocal.Printf("end %s\n", tr.endpos.ToString());
+					gameLocal.site.dropTelePoint(tr.endpos,"foobar");
+					owner->Teleport(tr.endpos,owner->spawnAngles,gameLocal.FindEntity("foobar"));
+				}
+				else {
+					gameLocal.site.dropTelePoint(end, "foobar");
+					owner->Teleport(end, owner->spawnAngles, gameLocal.FindEntity("foobar"));
+				}
+
+				//Attack ( false, 1, spread, 0, 1.0f );
 
 				int animNum = viewModel->GetAnimator()->GetAnim ( "fire" );
 				if ( animNum ) {

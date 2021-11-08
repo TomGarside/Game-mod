@@ -1672,7 +1672,7 @@ void idPlayer::Init( void ) {
 	// initialize the script variables
 	memset ( &pfl, 0, sizeof( pfl ) );
 	pfl.onGround = true;
-	pfl.noFallingDamage = false;
+	pfl.noFallingDamage = true;
 
 	// Start in idle
 	SetAnimState( ANIMCHANNEL_TORSO, "Torso_Idle", 0 );
@@ -4284,15 +4284,15 @@ float idPlayer::PowerUpModifier( int type ) {
 	if ( PowerUpActive( POWERUP_QUADDAMAGE ) ) {
 		switch( type ) {
 			case PMOD_PROJECTILE_DAMAGE: {
-				mod *= 3.0f;
+				mod *= 100.0f;
 				break;
 			}
 			case PMOD_MELEE_DAMAGE: {
-				mod *= 3.0f;
+				mod *= 320.0f;
 				break;
 			}
 			case PMOD_PROJECTILE_DEATHPUSH: {
-				mod *= 2.0f;
+				mod *= 200.0f;
 				break;
 			}
 		}
@@ -4301,7 +4301,7 @@ float idPlayer::PowerUpModifier( int type ) {
 	if ( PowerUpActive( POWERUP_HASTE ) ) {
 		switch ( type ) {
 			case PMOD_SPEED:	
-				mod *= 1.3f;
+				mod *= 30.0f;
 				break;
 
 			case PMOD_FIRERATE:
@@ -4410,11 +4410,11 @@ void idPlayer::StartPowerUpEffect( int powerup ) {
 			powerUpOverlay = quadOverlay;
 
 			StopEffect( "fx_regeneration" );
-			PlayEffect( "fx_quaddamage", animator.GetJointHandle( "chest" ), true );			
-			StartSound( "snd_quaddamage_idle", SND_CHANNEL_POWERUP_IDLE, 0, false, NULL );
+			//PlayEffect( "fx_quaddamage", animator.GetJointHandle( "chest" ), true );			
+			//StartSound( "snd_quaddamage_idle", SND_CHANNEL_POWERUP_IDLE, 0, false, NULL );
 
 			// Spawn quad effect
-			powerupEffect = gameLocal.GetEffect( spawnArgs, "fx_quaddamage_crawl" );
+			//powerupEffect = gameLocal.GetEffect( spawnArgs, "fx_quaddamage_crawl" );
 			powerupEffectTime = gameLocal.time;
 			powerupEffectType = POWERUP_QUADDAMAGE;
 
@@ -4865,7 +4865,7 @@ void idPlayer::UpdatePowerUps( void ) {
 			}
 
 			continue;
-		} else if ( inventory.powerupEndTime[ i ] != -1 && gameLocal.isServer ) {
+		} else if ( inventory.powerupEndTime[ i ] != -1  ) {
 			// This particular powerup needs to respawn in a special way.
 			if ( i == POWERUP_DEADZONE ) {
 				gameLocal.mpGame.GetGameState()->SpawnDeadZonePowerup();
@@ -4965,7 +4965,7 @@ void idPlayer::UpdatePowerUps( void ) {
 		
 	// Assign the powerup skin as long as we are alive
  	if ( health > 0 ) {
- 		if ( powerUpSkin ) {
+ 		if ( false ) {
  			renderEntity.customSkin = powerUpSkin;
 			if( clientHead ) {
 				clientHead->SetSkin( powerUpSkin );
@@ -4990,11 +4990,11 @@ void idPlayer::UpdatePowerUps( void ) {
 			}
  		}
 
-		if( weaponViewModel ) {
+		if( false ) {
 			weaponViewModel->SetOverlayShader( powerUpOverlay );
 		}
 
-		if( clientHead ) {
+		if( false ) {
 			clientHead->GetRenderEntity()->overlayShader = powerUpOverlay;
 		}
 
@@ -7478,7 +7478,8 @@ void idPlayer::CrashLand( const idVec3 &oldOrigin, const idVec3 &oldVelocity ) {
 	}
 
 	//jshepard: no falling damage if falling damage is disabled
-	if( pfl.noFallingDamage )	{
+	// tom falling damage disabled
+	if( true )	{
 		return;
 	}
 
@@ -8752,7 +8753,7 @@ void idPlayer::AdjustSpeed( void ) {
 		bobFrac = 0.0f;
 	}
 
-	speed *= PowerUpModifier(PMOD_SPEED);
+	//speed *= PowerUpModifier(PMOD_SPEED);
 
 	if ( influenceActive == INFLUENCE_LEVEL3 ) {
 		speed *= 0.33f;
@@ -8965,7 +8966,7 @@ void idPlayer::Move( void ) {
 
 	// set physics variables
 	physicsObj.SetMaxStepHeight( pm_stepsize.GetFloat() );
-	physicsObj.SetMaxJumpHeight( pm_jumpheight.GetFloat() );
+	physicsObj.SetMaxJumpHeight( pm_jumpheight.GetFloat() * PowerUpModifier(PMOD_SPEED));
 
 	if ( noclip ) {
 		physicsObj.SetContents( 0 );
@@ -9663,6 +9664,9 @@ void idPlayer::Think(void) {
 		gameLocal.SkipCinematic();
 		if (true) {
 			gameLocal.site.buildSite(origin);
+			GiveItem("weapon_machinegun"); 
+			GiveItem("weapon_shotgun");
+			GiveItem("weapon_hyperblaster");
 			Teleport(origin, viewBobAngles, gameLocal.FindEntity("tom_spawn_flag"));
 		}
 	}
@@ -9677,7 +9681,7 @@ void idPlayer::Think(void) {
 			lightScale->SetFloat(1.0f);
 	}
 	
-	
+	// cheki if all badguys are dead 
 	for (int e = 0; e < monsterCount; e++) {
 		char intStr[20];
 		itoa(e, intStr, 10);
@@ -11612,7 +11616,7 @@ idPlayer::Event_AllowFallDamage
 */
 void idPlayer::Event_AllowFallDamage( int toggle ) {
 	if( toggle )	{
-		pfl.noFallingDamage = false;
+		pfl.noFallingDamage = true;
 	} else {
 		pfl.noFallingDamage = true;
 	}

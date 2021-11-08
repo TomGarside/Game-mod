@@ -25,12 +25,12 @@ class digSite {
 public:
 	digSite(){}
 
-	void buildSite(idVec3 origin);
+	void buildSite(idVec3 );
 	void spawnWave();
-	void dig(idVec3 position, char* tool);
+	void dig( char* );
 	void resetAp();
 	void updateAp();
-	void dropTelePoint();
+	void dropTelePoint(idVec3, char*);
 private:
 
 

@@ -243,16 +243,15 @@ stateResult_t rvWeaponMachinegun::State_Fire ( const stateParms_t& parms ) {
 			gameLocal.Printf("randPellets:%i\nrandSpread:%f\n", randPellets, randSpread);
 			if ( wsfl.zoom ) {
 				nextAttackTime = gameLocal.time + (altFireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
-				Attack ( true, randPellets, randSpread, 0, 1.0f );
+			
+				gameLocal.site.dig("shovel");
 				fireHeld = true;
 			} else {
 				nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
-				idVec3 foobar;
 
-				gameLocal.site.dig(foobar, "shovel");
-				//Attack ( false, randPellets, randSpread, 0, 1.0f );
+				gameLocal.site.dig("shovel");
 				// block auto fire 
-				fireHeld = false;
+				fireHeld = true;
 			}
 			PlayAnim ( ANIMCHANNEL_ALL, "fire", 0 );	
 			return SRESULT_STAGE ( STAGE_WAIT );
