@@ -4314,7 +4314,7 @@ float idPlayer::PowerUpModifier( int type ) {
 	if( PowerUpActive( POWERUP_AMMOREGEN ) ) {
 		switch( type ) {
 			case PMOD_FIRERATE: {
-				mod *= 0.7f;
+				
 				break;
 			}
 		}
@@ -4788,6 +4788,7 @@ void idPlayer::ClearPowerup( int i ) {
 	}
 	
 	StopPowerUpEffect( i );
+	godmode = false;
 }
 
 /*
@@ -4890,37 +4891,10 @@ void idPlayer::UpdatePowerUps( void ) {
 // squirrel: health regen only applies if you have positive health
 		if( health > 0 ) {
 			if ( PowerUpActive ( POWERUP_REGENERATION ) || PowerUpActive ( POWERUP_GUARD ) ) {
-				int healthBoundary = inventory.maxHealth; // health will regen faster under this value, slower above
-				int healthTic = 15;
-
-				if( PowerUpActive ( POWERUP_GUARD ) ) {
-					// guard max health == 200, so set the boundary back to 100
-					healthBoundary = inventory.maxHealth / 2;
-					if( PowerUpActive (POWERUP_REGENERATION) ) {
-						healthTic = 30;
-					}
-				}
-
-				if ( health < healthBoundary ) {
-					// only actually give health on the server
-					if( gameLocal.isServer ) {
-						health += healthTic;
-						if ( health > (healthBoundary * 1.1f) ) {
-							health = healthBoundary * 1.1f;
-						}
-					}
-					StartSound ( "snd_powerup_regen", SND_CHANNEL_POWERUP, 0, false, NULL );
-					nextHealthPulse = gameLocal.time + HEALTH_PULSE;
-				} else if ( health < (healthBoundary * 2) ) {
-					if( gameLocal.isServer ) {
-						health += healthTic / 3;
-						if ( health > (healthBoundary * 2) ) {
-							health = healthBoundary * 2;
-						}
-					}
-					StartSound ( "snd_powerup_regen", SND_CHANNEL_POWERUP, 0, false, NULL );
-					nextHealthPulse = gameLocal.time + HEALTH_PULSE;
-				}	
+				
+				nextHealthPulse = gameLocal.time + HEALTH_PULSE;
+				godmode = true; 
+			
 			// Health above max technically isnt a powerup but functions as one so handle it here
 			} else if ( health > inventory.maxHealth && gameLocal.isServer ) { 
 				nextHealthPulse = gameLocal.time + HEALTH_PULSE;
@@ -4931,27 +4905,9 @@ void idPlayer::UpdatePowerUps( void ) {
 	}
 
 	// Regenerate ammo
-	if( gameLocal.isServer && PowerUpActive( POWERUP_AMMOREGEN ) ) {
-		for( int i = 0; i < MAX_WEAPONS; i++ ) {
-			if( inventory.weapons & ( 1 << i ) ) {
-				int ammoIndex	= inventory.AmmoIndexForWeaponIndex( i );
-				int max			= inventory.StartingAmmoForWeaponIndex( i );
-
-				// only regen ammo if lower than starting
-				if( gameLocal.time > nextAmmoRegenPulse[ ammoIndex ] && inventory.ammo[ ammoIndex ] < max ) {
-					int step		= inventory.AmmoRegenStepForWeaponIndex( i );
-					int time		= inventory.AmmoRegenTimeForWeaponIndex( i );
-
-					if( inventory.ammo[ ammoIndex ] < max ) {
-						inventory.ammo[ ammoIndex ] += step;
-					}
-					if( inventory.ammo[ ammoIndex ] >= max ) {
-						inventory.ammo[ ammoIndex ] = max;
-					}
-
-					nextAmmoRegenPulse[ ammoIndex ] = gameLocal.time + time;
-				}	
-			}
+	if(  PowerUpActive( POWERUP_AMMOREGEN ) ) {
+		if (inventory.armor <= inventory.maxarmor) {
+			inventory.armor = inventory.maxarmor;
 		}
 	}
 
@@ -5054,7 +5010,7 @@ void idPlayer::ClearPowerUps( void ) {
    			ClearPowerup( i );
    		}
    	}
-
+	godmode = false;
 	inventory.ClearPowerUps();
 }
 
